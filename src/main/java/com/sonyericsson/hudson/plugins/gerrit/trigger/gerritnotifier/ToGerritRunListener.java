@@ -27,9 +27,11 @@ package com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier;
 import com.sonymobile.tools.gerrit.gerritevents.dto.events.GerritTriggeredEvent;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.events.lifecycle.GerritEventLifecycle;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.model.BuildMemory;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.model.BuildMemory.MemoryImprint;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.model.BuildsStartedStats;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritCause;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.SkipVote;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -261,6 +263,17 @@ public final class ToGerritRunListener extends RunListener<AbstractBuild> {
             name = project.getName();
         }
         logger.info("Project [{}] triggered by Gerrit: [{}]", name, event);
+        
+        //Check if a trigger notification needs to be sent to Gerrit
+        MemoryImprint imprint = memory.getMemoryImprint(event);
+        GerritTrigger trigger = GerritTrigger.getTrigger(project);
+        SkipVote skip = (trigger != null) ? trigger.getSkipVote() : null;
+        if (imprint != null && imprint.wasSubmissionReported() == false) {
+            if (skip == null || !skip.isOnSubmitted()) {
+                NotificationFactory.getInstance().queueBuildSubmitted(imprint);
+                imprint.setSubmissionReported(true);
+            }
+        }
     }
 
     /**
@@ -283,6 +296,12 @@ public final class ToGerritRunListener extends RunListener<AbstractBuild> {
             name = project.getName();
         }
         logger.info("Project [{}] re-triggered by Gerrit-User: [{}]", name, event);
+        
+        //Reset the notification message for submission
+        MemoryImprint imprint = memory.getMemoryImprint(event);
+        if (imprint != null) {
+            imprint.setSubmissionReported(false);
+        }
     }
 
     /**

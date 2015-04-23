@@ -31,9 +31,12 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTrigge
 import com.sonyericsson.hudson.plugins.gerrit.trigger.extensions.GerritTriggeredBuildListener;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.model.BuildMemory.MemoryImprint;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.model.BuildsStartedStats;
+
 import hudson.model.AbstractBuild;
 import hudson.model.Hudson;
 import hudson.model.TaskListener;
+import hudson.util.StreamTaskListener;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +103,40 @@ public class GerritNotifier {
         }
     }
 
+    /**
+     * Generates the builds-submitted command based on configured templates and
+     * build-values and sends it to Gerrit.
+     * 
+     * @param memoryImprint the memory of all the builds for an event; may be incomplete.
+     */
+    public void buildsSubmitted(MemoryImprint memoryImprint) {
+        try {
+            if (!(memoryImprint.getEvent() instanceof ChangeBasedEvent)) {
+                return;
+            }
+            //Expand with an empty listener; as no listener from a started task is present
+            String command = parameterExpander.getBuildSubmittedCommand(
+                    memoryImprint, StreamTaskListener.NULL
+            );
+            if (command == null) {
+                logger.error("Something wrong during parameter extraction. "
+                        + "Gerrit will not be notified of BuildSubmitted");
+                return;
+            }
+            if (command.isEmpty()) {
+                logger.info("BuildSubmitted command is empty.  Gerrit will not be notified of BuildSubmitted");
+                return;
+            }
+            
+            logger.info("Notifying BuildCompleted to gerrit: {}", command);
+            cmdRunner.sendCommand(command);
+            GerritTriggeredBuildListener.fireOnCompleted(memoryImprint, command);
+            
+        } catch (Exception ex) {
+            logger.error("Could not complete BuildsSubmitted notification!", ex);
+        }
+    }
+    
     /**
      * Generates the build-completed command based on configured templates and build-values and sends it to Gerrit.
      * @param memoryImprint the memory of all the builds for an event.

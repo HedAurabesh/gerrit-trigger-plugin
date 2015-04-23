@@ -415,7 +415,12 @@ public class ParameterExpander {
     public Notify getHighestNotificationLevel(MemoryImprint memoryImprint, boolean onlyBuilt) {
         Notify highestLevel = Notify.NONE;
         for (Entry entry : memoryImprint.getEntries()) {
-            Result result = entry.getBuild().getResult();
+            AbstractBuild<?,?> build = entry.getBuild();
+            if (build == null) {
+                continue;
+            }
+            
+            Result result = build.getResult();
             if (onlyBuilt && result == Result.NOT_BUILT) {
                 continue;
             }
@@ -451,6 +456,39 @@ public class ParameterExpander {
         return Config.DEFAULT_NOTIFICATION_LEVEL;
     }
 
+    /**
+     * Gets the "expanded" build submitted command to send to gerrit.
+     *
+     * @param memoryImprint the memory with all the information; may be incomplete
+     * @param listener      the taskListener
+     * @return the command.
+     */
+    public String getBuildSubmittedCommand(MemoryImprint memoryImprint, TaskListener listener) {
+        String command;
+        command = config.getGerritCmdBuildSubmitted();
+        
+        int verified = 0;
+        int codeReview = 0;
+        Notify notifyLevel = Notify.ALL;
+        if (memoryImprint.getEvent().isScorable()) {
+            verified = config.getGerritBuildSubmittedVerifiedValue();
+            codeReview = config.getGerritBuildSubmittedCodeReviewValue();
+            notifyLevel = getHighestNotificationLevel(memoryImprint, true);
+        }
+        
+        Map<String, String> parameters = createStandardParameters(null, memoryImprint.getEvent(),
+                codeReview, verified, notifyLevel.name());
+        parameters.put("SUBMIT_STATS", createSubmittedStats(memoryImprint, parameters));
+        
+        AbstractBuild<?,?> build = null;
+        Entry[] entries = memoryImprint.getEntries();
+        if (entries.length > 0 && entries[0].getBuild() != null) {
+            build = entries[0].getBuild();
+        }
+
+        return expandParameters(command, build, listener, parameters);
+    }
+    
     /**
      * Gets the "expanded" build completed command to send to gerrit.
      *
@@ -593,6 +631,16 @@ public class ParameterExpander {
 
         return str.toString();
     }
+    
+    private String createSubmittedStats(MemoryImprint memoryImprint, Map<String, String> parameters) {
+        String rootUrl = hudson.getRootUrl();
+        
+        if (rootUrl == null) {
+            return "(No server URL configured)";
+        }
+        return rootUrl;
+    }
+    
 
     /**
      * Returns cover message to be send after build has been completed.

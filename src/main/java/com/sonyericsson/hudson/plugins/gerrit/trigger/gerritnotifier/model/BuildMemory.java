@@ -29,9 +29,11 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.model.Build
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritCause;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.TriggerContext;
+
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Result;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.sonyericsson.hudson.plugins.gerrit.trigger.utils.Logic.shouldSkip;
 
@@ -389,6 +392,7 @@ public class BuildMemory {
 
         private GerritTriggeredEvent event;
         private List<Entry> list = new ArrayList<Entry>();
+        private AtomicBoolean submissionReported = new AtomicBoolean();
 
         /**
          * Constructor.
@@ -690,6 +694,26 @@ public class BuildMemory {
             return true;
         }
 
+        /**
+         * Returns whether or not the submission was reported.
+         * 
+         * @return true, if a submission was set to have been sent.
+         */
+        public boolean wasSubmissionReported() {
+            if (submissionReported == null) {
+                return false;
+            }
+            return submissionReported.get();
+        }
+        
+        public void setSubmissionReported(boolean submitted) {
+            if (submissionReported == null) {
+                this.submissionReported = new AtomicBoolean(submitted);
+            } else {
+                this.submissionReported.set(submitted);
+            }
+        }
+        
         //CS IGNORE FinalClass FOR NEXT 5 LINES. REASON: Testability.
 
         /**

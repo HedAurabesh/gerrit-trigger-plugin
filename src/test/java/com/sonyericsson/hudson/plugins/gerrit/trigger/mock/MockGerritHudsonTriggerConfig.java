@@ -103,6 +103,11 @@ public class MockGerritHudsonTriggerConfig implements
     }
 
     @Override
+    public String getGerritCmdBuildSubmitted() {
+        return "CHANGE=<CHANGE> PATCHSET=<PATCHSET> VERIFIED=0 MSG=The build is submitted";
+    }
+    
+    @Override
     public File getGerritAuthKeyFile() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -221,6 +226,16 @@ public class MockGerritHudsonTriggerConfig implements
     @Override
     public int getGerritBuildNotBuiltCodeReviewValue() {
         return -6;
+    }
+    
+    @Override
+    public int getGerritBuildSubmittedVerifiedValue() {
+        return -6;
+    }
+
+    @Override
+    public int getGerritBuildSubmittedCodeReviewValue() {
+        return -7;
     }
 
     @Override

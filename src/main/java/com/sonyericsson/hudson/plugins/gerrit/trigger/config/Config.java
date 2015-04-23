@@ -54,6 +54,7 @@ import java.util.concurrent.TimeUnit;
 
 
 
+
 //CS IGNORE LineLength FOR NEXT 11 LINES. REASON: static import.
 import static com.sonymobile.tools.gerrit.gerritevents.GerritDefaultValues.DEFAULT_BUILD_SCHEDULE_DELAY;
 import static com.sonymobile.tools.gerrit.gerritevents.GerritDefaultValues.DEFAULT_DYNAMIC_CONFIG_REFRESH_INTERVAL;
@@ -113,7 +114,16 @@ public class Config implements IGerritHudsonTriggerConfig {
      * Default code review vote to Gerrit when a build is not built.
      */
     public static final int DEFAULT_GERRIT_BUILD_NOT_BUILT_CODE_REVIEW_VALUE = 0;
-
+    /**
+     * Default verified vote to Gerrit when at least one build is going to be issued.
+     */
+    public static final int DEFAULT_GERRIT_BUILD_SUBMITTED_VERIFIED_VALUE = 0;
+    /**
+     * Default code review vote to Gerrit when at least one build is going to be issued.
+     */
+    public static final int DEFAULT_GERRIT_BUILD_SUBMITTED_CODE_REVIEW_VALUE = 0;
+    
+    
     /**
      * Default timeout value in minutes for the connection watchdog.
      */
@@ -156,6 +166,7 @@ public class Config implements IGerritHudsonTriggerConfig {
     private String gerritVerifiedCmdBuildFailed;
     private String gerritVerifiedCmdBuildStarted;
     private String gerritVerifiedCmdBuildNotBuilt;
+    private String gerritVerifiedCmdBuildSubmitted;
     private String gerritFrontEndUrl;
     private int gerritBuildStartedVerifiedValue;
     private int gerritBuildStartedCodeReviewValue;
@@ -167,6 +178,9 @@ public class Config implements IGerritHudsonTriggerConfig {
     private int gerritBuildUnstableCodeReviewValue;
     private int gerritBuildNotBuiltVerifiedValue;
     private int gerritBuildNotBuiltCodeReviewValue;
+    private int gerritBuildSubmittedVerifiedValue;
+    private int gerritBuildSubmittedCodeReviewValue;
+    
     private boolean enableManualTrigger;
     private boolean enablePluginMessages;
     @Deprecated
@@ -220,6 +234,9 @@ public class Config implements IGerritHudsonTriggerConfig {
         gerritBuildUnstableVerifiedValue = config.getGerritBuildUnstableVerifiedValue();
         gerritBuildUnstableCodeReviewValue = config.getGerritBuildUnstableCodeReviewValue();
         gerritBuildNotBuiltVerifiedValue = config.getGerritBuildNotBuiltVerifiedValue();
+        gerritBuildNotBuiltCodeReviewValue = config.getGerritBuildNotBuiltCodeReviewValue();
+        gerritBuildSubmittedVerifiedValue = config.getGerritBuildSubmittedVerifiedValue();
+        gerritBuildSubmittedCodeReviewValue = config.getGerritBuildSubmittedCodeReviewValue();
         gerritBuildNotBuiltCodeReviewValue = config.getGerritBuildNotBuiltCodeReviewValue();
         gerritVerifiedCmdBuildStarted = config.getGerritCmdBuildStarted();
         gerritVerifiedCmdBuildFailed = config.getGerritCmdBuildFailed();
@@ -310,6 +327,12 @@ public class Config implements IGerritHudsonTriggerConfig {
         gerritBuildNotBuiltCodeReviewValue = formData.optInt(
                 "gerritBuildNotBuiltCodeReviewValue",
                 DEFAULT_GERRIT_BUILD_NOT_BUILT_CODE_REVIEW_VALUE);
+        gerritBuildSubmittedVerifiedValue = formData.optInt(
+                "gerritBuildSubmittedVerifiedValue",
+                DEFAULT_GERRIT_BUILD_SUBMITTED_VERIFIED_VALUE);
+        gerritBuildSubmittedCodeReviewValue = formData.optInt(
+                "gerritBuildSubmittedCodeReviewValue",
+                DEFAULT_GERRIT_BUILD_SUBMITTED_CODE_REVIEW_VALUE);
 
         gerritVerifiedCmdBuildStarted = formData.optString(
                 "gerritVerifiedCmdBuildStarted",
@@ -330,6 +353,10 @@ public class Config implements IGerritHudsonTriggerConfig {
         gerritVerifiedCmdBuildNotBuilt = formData.optString(
                 "gerritVerifiedCmdBuildNotBuilt",
                 "gerrit review <CHANGE>,<PATCHSET> --message 'No Builds Executed <BUILDS_STATS>' "
+                        + "--verified <VERIFIED> --code-review <CODE_REVIEW>");
+        gerritVerifiedCmdBuildSubmitted = formData.optString(
+                "gerritVerifiedCmdBuildSubmitted",
+                "gerrit approve <CHANGE>,<PATCHSET> --message 'Builds submitted <SUBMIT_STATS>' "
                         + "--verified <VERIFIED> --code-review <CODE_REVIEW>");
         gerritFrontEndUrl = formData.optString(
                 "gerritFrontEndUrl",
@@ -757,6 +784,11 @@ public class Config implements IGerritHudsonTriggerConfig {
     public String getGerritCmdBuildNotBuilt() {
         return gerritVerifiedCmdBuildNotBuilt;
     }
+    
+    @Override
+    public String getGerritCmdBuildSubmitted() {
+        return gerritVerifiedCmdBuildSubmitted;
+    }
 
     /**
      * GerritVerifiedCmdBuildNotBuilt.
@@ -816,6 +848,16 @@ public class Config implements IGerritHudsonTriggerConfig {
     @Override
     public int getGerritBuildNotBuiltCodeReviewValue() {
         return gerritBuildNotBuiltCodeReviewValue;
+    }
+    
+    @Override
+    public int getGerritBuildSubmittedVerifiedValue() {
+        return gerritBuildSubmittedVerifiedValue;
+    }
+
+    @Override
+    public int getGerritBuildSubmittedCodeReviewValue() {
+        return gerritBuildSubmittedCodeReviewValue;
     }
 
     @Override

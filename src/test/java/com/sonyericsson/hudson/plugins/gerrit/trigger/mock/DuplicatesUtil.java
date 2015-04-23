@@ -85,8 +85,8 @@ public abstract class DuplicatesUtil {
         projects.add(new GerritProject(CompareType.ANT, "**",
                 Collections.singletonList(new Branch(CompareType.ANT, "**")), null, null, null));
         p.addTrigger(new GerritTrigger(projects, null,
-                null, null, null, null, null, null, null, null, null, null,
-                false, true, false, false, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
+                false, true, false, false, null, null, null, null, null, null, null, null,
                 null, serverName, null, null, false, false, null, null));
         rule.submit(rule.createWebClient().getPage(p, "configure").getFormByName("config"));
         return p;
@@ -114,8 +114,8 @@ public abstract class DuplicatesUtil {
         URI uri = file.toURI();
         String filepath = uri.toURL().toString();
         GerritTrigger trigger = new GerritTrigger(projects, null,
-                null, null, null, null, null, null, null, null, null, null, false,
-                false, false, false, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, false,
+                false, false, false, null, null, null, null, null, null, null, null, null,
                 PluginImpl.DEFAULT_SERVER_NAME, null, list, true, false, filepath, null);
         p.addTrigger(trigger);
         rule.submit(rule.createWebClient().getPage(p, "configure").getFormByName("config"));
@@ -156,9 +156,9 @@ public abstract class DuplicatesUtil {
         PluginCommentAddedEvent event = new PluginCommentAddedEvent("CRVW", "1");
         List<PluginGerritEvent> list = new LinkedList<PluginGerritEvent>();
         list.add(event);
-        p.addTrigger(new GerritTrigger(projects, null,
+        p.addTrigger(new GerritTrigger(projects, null, null, null,
                 null, null, null, null, null, null, null, null, null, null,
-                false, true, false, false, null, null, null, null, null, null, null,
+                false, true, false, false, null, null, null, null, null, null, null, null,
                 null, serverName, null, list, false, false, null, null));
         rule.submit(rule.createWebClient().getPage(p, "configure").getFormByName("config"));
         return p;

@@ -51,6 +51,8 @@
                         <label class="attach-previous">${%Unstable}</label>
                         <input type="checkbox" name="_.onNotBuilt" checked="${skipIt.onNotBuilt?'true':null}"/>
                         <label class="attach-previous">${%Not Built}</label>
+                        <input type="checkbox" name="_.onSubmitted" checked="${skipIt.onSubmitted?'true':null}"/>
+                        <label class="attach-previous">${%Submitted}</label>
                     </div>
                 </f:entry>
                 <tr><td></td><td><div style="font-weight: bold; border-bottom: 1px solid black; margin-bottom: 0.2em; margin-top: 0.4em;">${%Verify}</div></td></tr>

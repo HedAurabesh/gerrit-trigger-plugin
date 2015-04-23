@@ -34,13 +34,16 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.job.ssh.BuildCompletedCommandJob;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.job.ssh.BuildSubmittedCommandJob;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.job.rest.BuildCompletedRestCommandJob;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.job.ssh.BuildStartedCommandJob;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.job.rest.BuildStartedRestCommandJob;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.model.BuildMemory;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.gerritnotifier.model.BuildsStartedStats;
+
 import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,6 +127,31 @@ public class NotificationFactory {
                     GerritSendCommandQueue.queue(new BuildCompletedRestCommandJob(config, memoryImprint, listener));
                 } else {
                     GerritSendCommandQueue.queue(new BuildCompletedCommandJob(config, memoryImprint, listener));
+                }
+            } else {
+                logger.warn("Nothing queued since there is no configuration for serverName: {}", serverName);
+            }
+        } else {
+            logger.warn("Nothing queued since the event in memory contained no serverName: {}", memoryImprint);
+        }
+    }
+    
+    /**
+     * Queues a build submitted command on the send-command queue.
+     *
+     * @param memoryImprint the memory of the builds.
+     * @see GerritSendCommandQueue#queue(com.sonymobile.tools.gerrit.gerritevents.workers.cmd.AbstractSendCommandJob)
+     * @see BuildSubmittedCommandJob
+     */
+    public void queueBuildSubmitted(BuildMemory.MemoryImprint memoryImprint) {
+        String serverName = getServerName(memoryImprint);
+        if (serverName != null) {
+            IGerritHudsonTriggerConfig config = getConfig(serverName);
+            if (config != null) {
+                if (config.isUseRestApi()) {
+                    GerritSendCommandQueue.queue(new BuildSubmittedCommandJob(config, memoryImprint));
+                } else {
+                    GerritSendCommandQueue.queue(new BuildSubmittedCommandJob(config, memoryImprint));
                 }
             } else {
                 logger.warn("Nothing queued since there is no configuration for serverName: {}", serverName);

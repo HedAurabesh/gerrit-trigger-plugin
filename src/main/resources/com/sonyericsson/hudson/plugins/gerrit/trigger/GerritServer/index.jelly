@@ -132,6 +132,13 @@
                                    default="${com.sonyericsson.gerrithudsontrigger.config.Config.DEFAULT_GERRIT_BUILD_NOT_BUILT_VERIFIED_VALUE}"
                                    checkUrl="'${rootURL}/${serverURL}/integerCheck?value='+escape(this.value)"/>
                     </f:entry>
+                    <f:entry title="${%Submitted}"
+                             help="/plugin/gerrit-trigger/help-GerritBuildSubmittedVerified.html">
+                        <f:textbox name="gerritBuildSubmittedVerifiedValue"
+                                   value="${it.config.gerritBuildSubmittedVerifiedValue}"
+                                   default="${com.sonyericsson.gerrithudsontrigger.config.Config.DEFAULT_GERRIT_BUILD_SUBMITTED_VERIFIED_VALUE}"
+                                   checkUrl="'${rootURL}/${serverURL}/integerCheck?value='+escape(this.value)"/>
+                    </f:entry>
                     <tr>
                         <td></td>
                         <td>
@@ -175,6 +182,13 @@
                                    default="${com.sonyericsson.gerrithudsontrigger.config.Config.DEFAULT_GERRIT_BUILD_NOT_BUILT_CODE_REVIEW_VALUE}"
                                    checkUrl="'${rootURL}/${serverURL}/integerCheck?value='+escape(this.value)"/>
                     </f:entry>
+                    <f:entry title="${%Submitted}"
+                             help="/plugin/gerrit-trigger/help-GerritBuildSubmittedCodeReview.html">
+                        <f:textbox name="gerritBuildSubmittedCodeReviewValue"
+                                   value="${it.config.gerritBuildSubmittedCodeReviewValue}"
+                                   default="${com.sonyericsson.gerrithudsontrigger.config.Config.DEFAULT_GERRIT_BUILD_SUBMITTED_CODE_REVIEW_VALUE}"
+                                   checkUrl="'${rootURL}/${serverURL}/integerCheck?value='+escape(this.value)"/>
+                    </f:entry>
                 </f:section>
                 <f:advanced>
                     <f:section title="${%Gerrit Verified Commands}">
@@ -207,6 +221,12 @@
                             <f:textbox name="gerritVerifiedCmdBuildNotBuilt"
                                        value="${it.config.gerritCmdBuildNotBuilt}"
                                        default="gerrit review &lt;CHANGE&gt;,&lt;PATCHSET&gt; --message 'No Builds Executed &lt;BUILDS_STATS&gt;' --verified &lt;VERIFIED&gt; --code-review &lt;CODE_REVIEW&gt;"/>
+                        </f:entry>
+                        <f:entry title="${%Submitted}"
+                                 help="/plugin/gerrit-trigger/help-GerritVerifiedCmdBuildSubmitted.html">
+                            <f:textbox name="gerritVerifiedCmdBuildSubmitted"
+                                       value="${it.config.gerritCmdBuildSubmitted}"
+                                       default="gerrit review &lt;CHANGE&gt;,&lt;PATCHSET&gt; --message 'Builds submitted &lt;SUBMIT_STATS&gt;' --verified &lt;VERIFIED&gt; --code-review &lt;CODE_REVIEW&gt;"/>
                         </f:entry>
                     </f:section>
                     <f:section title="${%Miscellaneous}">

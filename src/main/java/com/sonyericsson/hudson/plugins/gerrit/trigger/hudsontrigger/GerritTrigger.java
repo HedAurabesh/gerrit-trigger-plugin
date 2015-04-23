@@ -143,6 +143,8 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
     private Integer gerritBuildUnstableCodeReviewValue;
     private Integer gerritBuildNotBuiltVerifiedValue;
     private Integer gerritBuildNotBuiltCodeReviewValue;
+    private Integer gerritBuildSubmittedVerifiedValue;
+    private Integer gerritBuildSubmittedCodeReviewValue;
     private boolean silentMode;
     private String notificationLevel;
     private boolean escapeQuotes;
@@ -155,6 +157,7 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
     private String buildSuccessfulMessage;
     private String buildUnstableMessage;
     private String buildNotBuiltMessage;
+    private String buildSubmittedMessage;
     private String buildUnsuccessfulFilepath;
     private String customUrl;
     private String serverName;
@@ -203,6 +206,12 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
      * @param gerritBuildNotBuiltCodeReviewValue
      *                                       Job specific Gerrit code review vote when a build is not built, null means
      *                                       that the global value should be used.
+     * @param gerritBuildSubmittedVerifiedValue
+     *                                       Job specific Gerrit verified vote when at least one build is going to be
+     *                                       built, null means the global value should be used.
+     * @param gerritBuildSubmittedCodeReviewValue
+     *                                       Job specific Gerrit code review vote when at least one build is going to be
+     *                                       built, null means that the global value should be used.
      * @param silentMode                     Silent Mode on or off.
      * @param escapeQuotes                   EscapeQuotes on or off.
      * @param noNameAndEmailParameters       Whether to create parameters containing name and email
@@ -213,6 +222,7 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
      * @param buildUnstableMessage           Message to write to Gerrit when a build is unstable
      * @param buildFailureMessage            Message to write to Gerrit when a build fails
      * @param buildNotBuiltMessage           Message to write to Gerrit when all builds are not built
+     * @param buildSubmittedMessage          Message to write to Gerrit when at least one build is going to be built
      * @param buildUnsuccessfulFilepath      Filename to retrieve Gerrit comment message from, in the case of an
      *                                       unsuccessful build.
      * @param customUrl                      Custom URL to sen to Gerrit instead of build URL
@@ -239,6 +249,8 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
             Integer gerritBuildUnstableCodeReviewValue,
             Integer gerritBuildNotBuiltVerifiedValue,
             Integer gerritBuildNotBuiltCodeReviewValue,
+            Integer gerritBuildSubmittedVerifiedValue,
+            Integer gerritBuildSubmittedCodeReviewValue,
             boolean silentMode,
             boolean escapeQuotes,
             boolean noNameAndEmailParameters,
@@ -249,6 +261,7 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
             String buildUnstableMessage,
             String buildFailureMessage,
             String buildNotBuiltMessage,
+            String buildSubmittedMessage,
             String buildUnsuccessfulFilepath,
             String customUrl,
             String serverName,
@@ -270,6 +283,8 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
         this.gerritBuildUnstableCodeReviewValue = gerritBuildUnstableCodeReviewValue;
         this.gerritBuildNotBuiltVerifiedValue = gerritBuildNotBuiltVerifiedValue;
         this.gerritBuildNotBuiltCodeReviewValue = gerritBuildNotBuiltCodeReviewValue;
+        this.gerritBuildSubmittedVerifiedValue = gerritBuildSubmittedVerifiedValue;
+        this.gerritBuildSubmittedCodeReviewValue = gerritBuildSubmittedCodeReviewValue;
         this.silentMode = silentMode;
         this.escapeQuotes = escapeQuotes;
         this.noNameAndEmailParameters = noNameAndEmailParameters;
@@ -280,6 +295,7 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
         this.buildUnstableMessage = buildUnstableMessage;
         this.buildFailureMessage = buildFailureMessage;
         this.buildNotBuiltMessage = buildNotBuiltMessage;
+        this.buildSubmittedMessage = buildSubmittedMessage;
         this.buildUnsuccessfulFilepath = buildUnsuccessfulFilepath;
         this.customUrl = customUrl;
         this.serverName = serverName;
@@ -1188,7 +1204,7 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
     public void setGerritBuildNotBuiltCodeReviewValue(Integer gerritBuildNotBuiltCodeReviewValue) {
         this.gerritBuildNotBuiltCodeReviewValue = gerritBuildNotBuiltCodeReviewValue;
     }
-
+    
     /**
      * Job specific Gerrit verified vote when a build is not built, null means that the global value should be used.
      *
@@ -1197,7 +1213,7 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
     public Integer getGerritBuildNotBuiltVerifiedValue() {
         return gerritBuildNotBuiltVerifiedValue;
     }
-
+    
     /**
      * Job specific Gerrit verified vote when a build is not built, providing null means that the global value should be
      * used.
@@ -1208,7 +1224,47 @@ public class GerritTrigger extends Trigger<AbstractProject> implements GerritEve
     public void setGerritBuildNotBuiltVerifiedValue(Integer gerritBuildNotBuiltVerifiedValue) {
         this.gerritBuildNotBuiltVerifiedValue = gerritBuildNotBuiltVerifiedValue;
     }
+    
+    /**
+     * Job specific Gerrit verified vote when at least one build is going to be built, null means that the global value should be used.
+     *
+     * @return the vote value.
+     */
+    public Integer getGerritBuildSubmittedVerifiedValue() {
+        return gerritBuildSubmittedVerifiedValue;
+    }
+    
+    /**
+     * Job specific Gerrit verified vote when a build is not built, providing null means that the global value should be
+     * used.
+     *
+     * @param gerritBuildSubmittedVerifiedValue
+     *         the vote value.
+     */
+    public void setGerritBuildSubmittedVerifiedValue(Integer gerritBuildSubmittedVerifiedValue) {
+        this.gerritBuildSubmittedVerifiedValue = gerritBuildSubmittedVerifiedValue;
+    }
 
+    /**
+     * Job specific Gerrit code review vote when at least one build is going to be built, null means that the global value should be used.
+     *
+     * @return the vote value.
+     */
+    public Integer getGerritBuildSubmittedCodeReviewValue() {
+        return gerritBuildSubmittedCodeReviewValue;
+    }
+
+    /**
+     * Job specific Gerrit code review vote when at least one build is going to be built, providing null means that the global value should
+     * be used.
+     *
+     * @param gerritBuildSubmittedCodeReviewValue
+     *         the vote value.
+     */
+    public void setGerritBuildSubmittedCodeReviewValue(Integer gerritBuildSubmittedCodeReviewValue) {
+        this.gerritBuildSubmittedCodeReviewValue = gerritBuildSubmittedCodeReviewValue;
+    }
+    
     /**
      * Sets the path to a file that contains the unsuccessful Gerrit comment message.
      *

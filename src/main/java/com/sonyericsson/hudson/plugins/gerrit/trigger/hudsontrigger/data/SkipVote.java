@@ -40,6 +40,7 @@ public class SkipVote implements Serializable {
     private boolean onFailed;
     private boolean onUnstable;
     private boolean onNotBuilt;
+    private boolean onSubmitted;
 
     /**
      * Standard DataBound Constructor.
@@ -48,13 +49,31 @@ public class SkipVote implements Serializable {
      * @param onFailed if the vote should be skipped (not counted) for {@link hudson.model.Result#FAILURE} builds.
      * @param onUnstable if the vote should be skipped (not counted) for {@link hudson.model.Result#UNSTABLE} builds.
      * @param onNotBuilt if the vote should be skipped (not counted) for {@link hudson.model.Result#NOT_BUILT} builds.
+     * @param onSubmitted if the vote should be skipped (not counted) for submitting of builds.
      */
     @DataBoundConstructor
+    public SkipVote(boolean onSuccessful, boolean onFailed, boolean onUnstable, boolean onNotBuilt, boolean onSubmitted) {
+        this.onSuccessful = onSuccessful;
+        this.onFailed = onFailed;
+        this.onUnstable = onUnstable;
+        this.onNotBuilt = onNotBuilt;
+        this.onSubmitted = onSubmitted;
+    }
+    
+    /**
+     * Legacy constructor, which disables the "onSubmitted" event.
+     * 
+     * @param onSuccessful
+     * @param onFailed
+     * @param onUnstable
+     * @param onNotBuilt
+     */
     public SkipVote(boolean onSuccessful, boolean onFailed, boolean onUnstable, boolean onNotBuilt) {
         this.onSuccessful = onSuccessful;
         this.onFailed = onFailed;
         this.onUnstable = onUnstable;
         this.onNotBuilt = onNotBuilt;
+        this.onSubmitted = false;
     }
 
     /**
@@ -132,5 +151,23 @@ public class SkipVote implements Serializable {
      */
     public void setOnNotBuilt(boolean onNotBuilt) {
         this.onNotBuilt = onNotBuilt;
+    }
+    
+    /**
+     * If the vote should be skipped (not counted) for submitting of builds.
+     *
+     * @return true if it should be skipped.
+     */
+    public boolean isOnSubmitted() {
+        return onSubmitted;
+    }
+
+    /**
+     * If the vote should be skipped (not counted) for submitting of builds.
+     *
+     * @param onNotBuilt true if it should be skipped.
+     */
+    public void setOnSubmitted(boolean onSubmitted) {
+        this.onSubmitted = onSubmitted;
     }
 }

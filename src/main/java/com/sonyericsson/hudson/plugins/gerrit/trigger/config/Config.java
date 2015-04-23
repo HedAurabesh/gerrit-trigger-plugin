@@ -356,7 +356,7 @@ public class Config implements IGerritHudsonTriggerConfig {
                         + "--verified <VERIFIED> --code-review <CODE_REVIEW>");
         gerritVerifiedCmdBuildSubmitted = formData.optString(
                 "gerritVerifiedCmdBuildSubmitted",
-                "gerrit approve <CHANGE>,<PATCHSET> --message 'Builds submitted <SUBMIT_STATS>' "
+                "gerrit review <CHANGE>,<PATCHSET> --message 'Builds submitted <SUBMIT_STATS>' "
                         + "--verified <VERIFIED> --code-review <CODE_REVIEW>");
         gerritFrontEndUrl = formData.optString(
                 "gerritFrontEndUrl",
